@@ -1,0 +1,7 @@
+build/
+.build/
+*.dmg
+.DS_Store
+.swiftpm/
+Resources/HD-src/
+Resources/HD/
