@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds build/Kibble.app (universal, ad-hoc signed). Pass --dmg to also make build/Kibble.dmg.
+# Builds build/Kibble.app (universal, ad-hoc signed, hardened runtime). Pass --dmg to also make build/Kibble.dmg.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -40,7 +40,20 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-codesign --force --deep --sign - "$APP"
+# Hardened runtime, so other processes can't inject code and borrow Kibble's
+# Automation permission; Apple Events stay allowed for jumping to Terminal tabs.
+ENT=$(mktemp)
+cat > "$ENT" <<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.automation.apple-events</key><true/>
+</dict>
+</plist>
+XML
+codesign --force --options runtime --entitlements "$ENT" --sign - "$APP"
+rm -f "$ENT"
 echo "Built $APP"
 
 if [[ "${1:-}" == "--dmg" ]]; then

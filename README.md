@@ -43,6 +43,10 @@ There is also a menu bar item with the percentages, plus a menu for size, mute, 
 
 ## Install
 
+**[Download the latest release](https://github.com/znel2002/kibble/releases/latest)**, open the disk image and drag Kibble into Applications. Kibble isn't notarized yet, so the first time you open it macOS says it can't verify the developer: go to **System Settings → Privacy & Security** and click **Open Anyway**. Requires macOS 14 or later.
+
+### Build from source
+
 Requires macOS 14 or later and Xcode 15.3 or later.
 
 ```bash
@@ -70,8 +74,8 @@ You need to be signed in to Claude Code with a subscription (Pro, Max, Team or E
 ```bash
 swift build          # debug build
 swift test           # parsers, alert thresholds, sprites
-.build/debug/Kibble --snapshot docs           # render the widget and card to PNGs
-.build/debug/Kibble --snapshot docs --frames  # plus the frames behind demo.gif
+.build/debug/Kibble --snapshot docs --demo           # render the widget and card to PNGs, with made-up data
+.build/debug/Kibble --snapshot docs --demo --frames  # plus the frames behind demo.gif
 ```
 
 Each pet is one Python file in [`tools/pets/`](tools/pets), drawn with the small toolkit in [`tools/pixelkit.py`](tools/pixelkit.py): layered ASCII parts (tail, legs, coat, head, ears) that each get their own outline and are stacked back to front, with front-facing sitting poses drawn as one half and mirrored. To add a pet, copy one of the existing files, then check it with `python3 tools/pixelkit.py preview <id>`, which validates the frames and writes a contact sheet to `docs/pets/`. `python3 tools/sprites.py` exports every pet to `Sources/Kibble/Sprites.generated.swift` and regenerates the app and menu bar icons (it needs Pillow). Sounds are synthesised at launch in [`Sound.swift`](Sources/Kibble/Sound.swift), so the repo has no audio files.
